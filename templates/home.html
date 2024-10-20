@@ -1,0 +1,106 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Okv Testnet Faucet</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/party-js@latest/bundle/party.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" />
+    <style>
+        .no-copy {
+            user-select: none; /* Prevent text selection */
+            -webkit-user-select: none; /* Safari */
+            -moz-user-select: none; /* Firefox */
+            -ms-user-select: none; /* Internet Explorer/Edge */
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-300">
+    <!-- Navigation -->
+    <nav class="bg-gray-800">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="#" class="text-xl font-bold text-white">Okv Faucet</a>
+            <ul class="flex space-x-4">
+                <li><a href="#" class="text-white hover:text-gray-400">Home</a></li>
+                <li><a href="#" class="text-white hover:text-gray-400">Blockchain Info</a></li>
+                <li><a href="#" class="text-white hover:text-gray-400">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="flex flex-col items-center justify-center min-h-screen" data-aos="fade-up" style="background-color: rgba(0, 0, 0, 0.445); background-image: url(https://cdn.pixabay.com/photo/2018/07/14/11/33/earth-3537401_1280.jpg); background-repeat: no-repeat; background-position: center;">
+        <div class="flex flex-col items-center justify-center p-16 border-[0.1px] rounded-lg shadow-lg"  style="background-color: rgba(38, 38, 51, 0.712);">
+            <h1 class="text-4xl font-bold mb-8 text-white">Okv Testnet Faucet</h1>
+            <p class="text-center max-w-2xl mb-8 text-white">
+                Welcome to the Okv Testnet Faucet! Get free test tokens to start building on the blockchain. Just enter your wallet address and complete the CAPTCHA to receive testnet tokens instantly.
+            </p>
+
+            <!-- Faucet Form -->
+            <div class="w-full max-w-md bg-gray-800 rounded-lg p-8 shadow-lg" data-aos="fade-up" data-aos-delay="200" style="background-color: rgba(50, 64, 89, 0.628);">
+                <form id="faucetForm" method="POST" action="{% url 'submit_faucet' %}">
+                    {% csrf_token %}
+                    <div class="mb-4">
+                        <label for="walletAddress" class="block text-sm font-medium text-white">Wallet Address</label>
+                        <input type="text" id="walletAddress" name="walletAddress" placeholder="Enter your wallet address" class="w-full mt-2 p-3 rounded-md bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="captcha" class="block text-sm font-medium text-white">CAPTCHA</label>
+                        <input type="text" id="captcha" name="captcha" placeholder="Enter CAPTCHA text" class="w-full mt-2 p-3 rounded-md bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                        <p class="text-white mt-2 no-copy">{{ captcha }}</p> <!-- Display CAPTCHA -->
+                    </div>
+
+                    <button type="submit" id="faucetButton" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg mt-4">
+                        <i class="fas fa-paper-plane mr-2"></i> Request Testnet Tokens
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Blockchain Details Section -->
+    <section class="py-16 bg-gray-800 text-gray-300" data-aos="fade-up">
+        <div class="container mx-auto text-center">
+            <h2 class="text-3xl font-bold text-white mb-8">What is Okv Testnet?</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="p-6 bg-gray-900 rounded-lg shadow-lg" data-aos="fade-up" data-aos-delay="100">
+                    <h3 class="text-xl font-semibold mb-4">Instant Transactions</h3>
+                    <p>Experience fast transactions on the Okv testnet. Build and test your decentralized applications with ease.</p>
+                </div>
+                <div class="p-6 bg-gray-900 rounded-lg shadow-lg" data-aos="fade-up" data-aos-delay="200">
+                    <h3 class="text-xl font-semibold mb-4">Secure and Reliable</h3>
+                    <p>Okv testnet offers a secure and reliable environment for developers to build and deploy their applications.</p>
+                </div>
+                <div class="p-6 bg-gray-900 rounded-lg shadow-lg" data-aos="fade-up" data-aos-delay="300">
+                    <h3 class="text-xl font-semibold mb-4">Community Support</h3>
+                    <p>Join our community of developers and enthusiasts to share ideas, collaborate, and support each other.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Toastr JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Display Django messages using Toastr
+            {% if messages %}
+                {% for message in messages %}
+                    toastr.{{ message.tags }}("{{ message }}");
+                {% endfor %}
+            {% endif %}
+        });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    <script>
+        AOS.init();
+    </script>
+   
+</body>
+</html>
